@@ -1,4 +1,4 @@
-package com.fokakefir.musicplayer.model.ytextraction;
+package com.fokakefir.musicplayer.logic.ytextraction;
 
 
 

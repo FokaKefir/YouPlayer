@@ -1,140 +1,104 @@
-package com.fokakefir.musicplayer.gui.dialog;
+package com.fokakefir.musicplayer.gui.dialog
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
+import android.app.AlertDialog
+import android.app.Dialog
+import android.os.Bundle
+import android.text.Editable
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Spinner
+import androidx.appcompat.app.AppCompatDialogFragment
+import com.fokakefir.musicplayer.R
+import com.fokakefir.musicplayer.model.Playlist
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDialogFragment;
+class PlaylistDialog : AppCompatDialogFragment, OnItemSelectedListener {
+    private lateinit var txtPlaylist: EditText
+    private lateinit var spinner: Spinner
+    private var imgPlaylist: ImageView? = null
+    private var strName: String? = null
+    private var strColor: String? = null
+    private var playlistId = 0
+    private var edit: Boolean
+    private var listener: OnPlaylistDialogListener
 
-import com.fokakefir.musicplayer.R;
-import com.fokakefir.musicplayer.logic.database.MusicPlayerContract;
-import com.fokakefir.musicplayer.model.Playlist;
-
-public class PlaylistDialog extends AppCompatDialogFragment implements AdapterView.OnItemSelectedListener {
-
-    private EditText txtPlaylist;
-    private Spinner spinner;
-    private ImageView imgPlaylist;
-
-    private String strName;
-    private String strColor;
-
-    private int playlistId;
-
-    private boolean edit;
-
-    private OnPlaylistDialogListener listener;
-
-    public PlaylistDialog(OnPlaylistDialogListener listener) {
-        this.listener = listener;
-        this.edit = false;
+    constructor(listener: OnPlaylistDialogListener) {
+        this.listener = listener
+        edit = false
     }
 
-    public PlaylistDialog(int playlistId, String strName, String strColor, OnPlaylistDialogListener listener) {
-        this.playlistId = playlistId;
-        this.strName = strName;
-        this.strColor = strColor;
-        this.listener = listener;
-        this.edit = true;
+    constructor(
+        playlistId: Int,
+        strName: String?,
+        strColor: String?,
+        listener: OnPlaylistDialogListener
+    ) {
+        this.playlistId = playlistId
+        this.strName = strName
+        this.strColor = strColor
+        this.listener = listener
+        edit = true
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_playlist, null);
-
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val builder = AlertDialog.Builder(activity)
+        val inflater = activity!!.layoutInflater
+        val view = inflater.inflate(R.layout.dialog_playlist, null)
         builder.setView(view)
-                .setTitle("Add new playlist")
-                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        strName = txtPlaylist.getText().toString().trim();
-                        if (!edit) {
-                            listener.onPlaylistCreate(strName, strColor);
-                        } else {
-                            listener.onPlaylistEdit(playlistId, strName, strColor);
-                        }
-                    }
-                });
-
-        this.txtPlaylist = view.findViewById(R.id.txt_new_playlist);
-        this.spinner = view.findViewById(R.id.spinner_colors);
-        this.imgPlaylist = view.findViewById(R.id.img_new_playlist);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.colors, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        this.spinner.setAdapter(adapter);
-        this.spinner.setOnItemSelectedListener(this);
-
-        setImgPlaylistColor(Playlist.COLOR_RED);
-
-        if (this.strName != null && this.strColor != null) {
-            this.txtPlaylist.setText(strName);
-            int position = adapter.getPosition(this.strColor);
-            this.spinner.setSelection(position);
-            setImgPlaylistColor(this.strColor);
+            .setTitle("Add new playlist")
+            .setNegativeButton("cancel") { dialogInterface, i -> }
+            .setPositiveButton("ok") { dialogInterface, i ->
+                strName = txtPlaylist!!.text.toString().trim { it <= ' ' }
+                if (!edit) {
+                    listener.onPlaylistCreate(strName, strColor)
+                } else {
+                    listener.onPlaylistEdit(playlistId, strName, strColor)
+                }
+            }
+        txtPlaylist = view.findViewById(R.id.txt_new_playlist)
+        spinner = view.findViewById(R.id.spinner_colors)
+        imgPlaylist = view.findViewById(R.id.img_new_playlist)
+        val adapter = ArrayAdapter.createFromResource(
+            context!!,
+            R.array.colors,
+            android.R.layout.simple_spinner_item
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = this
+        setImgPlaylistColor(Playlist.COLOR_RED)
+        if (strName != null && strColor != null) {
+            txtPlaylist.text = Editable.Factory.getInstance().newEditable(strName)
+            val position = adapter.getPosition(strColor)
+            spinner.setSelection(position)
+            setImgPlaylistColor(strColor)
         }
-
-        return builder.create();
+        return builder.create()
     }
 
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long l) {
-        this.strColor = parent.getItemAtPosition(position).toString();
-        setImgPlaylistColor(this.strColor);
+    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, l: Long) {
+        strColor = parent.getItemAtPosition(position).toString()
+        setImgPlaylistColor(strColor)
     }
 
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
-    public void setImgPlaylistColor(String strColor) {
-        int color = R.color.playlistWhite;
-        switch (strColor) {
-            case Playlist.COLOR_RED:
-                color = R.color.playlistRed;
-                break;
-            case Playlist.COLOR_ORANGE:
-                color = R.color.playlistOrange;
-                break;
-            case Playlist.COLOR_YELLOW:
-                color = R.color.playlistYellow;
-                break;
-            case Playlist.COLOR_GREEN:
-                color = R.color.playlistGreen;
-                break;
-            case Playlist.COLOR_BLUE:
-                color = R.color.playlistBlue;
-                break;
+    override fun onNothingSelected(adapterView: AdapterView<*>?) {}
+    fun setImgPlaylistColor(strColor: String?) {
+        var color = R.color.playlistWhite
+        when (strColor) {
+            Playlist.COLOR_RED -> color = R.color.playlistRed
+            Playlist.COLOR_ORANGE -> color = R.color.playlistOrange
+            Playlist.COLOR_YELLOW -> color = R.color.playlistYellow
+            Playlist.COLOR_GREEN -> color = R.color.playlistGreen
+            Playlist.COLOR_BLUE -> color = R.color.playlistBlue
         }
-        this.imgPlaylist.setBackgroundColor(this.getContext().getResources().getColor(color));
+        imgPlaylist!!.setBackgroundColor(this.context!!.resources.getColor(color))
     }
 
-    public interface OnPlaylistDialogListener {
-        void onPlaylistCreate(String name, String color);
-        void onPlaylistEdit(int playlistId, String name, String color);
+    interface OnPlaylistDialogListener {
+        fun onPlaylistCreate(name: String?, color: String?)
+        fun onPlaylistEdit(playlistId: Int, name: String?, color: String?)
     }
-
 }

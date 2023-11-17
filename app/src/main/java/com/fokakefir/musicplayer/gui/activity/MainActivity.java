@@ -35,12 +35,11 @@ import com.fokakefir.musicplayer.gui.fragment.PlaylistsFragment;
 import com.fokakefir.musicplayer.gui.fragment.SearchFragment;
 import com.fokakefir.musicplayer.logic.background.RequestDownloadMusicStreamResponse;
 import com.fokakefir.musicplayer.logic.database.MusicPlayerDBHelper;
-import com.fokakefir.musicplayer.logic.notification.App;
 import com.fokakefir.musicplayer.logic.player.MusicPlayerService;
 import com.fokakefir.musicplayer.model.Music;
-import com.fokakefir.musicplayer.model.ytextraction.VideoMeta;
-import com.fokakefir.musicplayer.model.ytextraction.YouTubeExtractor;
-import com.fokakefir.musicplayer.model.ytextraction.YtFile;
+import com.fokakefir.musicplayer.logic.ytextraction.VideoMeta;
+import com.fokakefir.musicplayer.logic.ytextraction.YouTubeExtractor;
+import com.fokakefir.musicplayer.logic.ytextraction.YtFile;
 import com.gauravk.audiovisualizer.base.BaseVisualizer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
@@ -52,8 +51,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.fokakefir.musicplayer.logic.network.YoutubeAPI.YOUTUBE_ITAG_AUDIO_128K;
-import static com.fokakefir.musicplayer.logic.network.YoutubeAPI.YOUTUBE_ITAG_AUDIO_160K;
-import static com.fokakefir.musicplayer.logic.network.YoutubeAPI.YOUTUBE_ITAG_VIDEO_480P;
 import static com.fokakefir.musicplayer.logic.player.MusicPlayerService.INTENT_FILTER_SERVICE;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, SlidingUpPanelLayout.PanelSlideListener, View.OnClickListener, RequestDownloadMusicStreamResponse, SeekBar.OnSeekBarChangeListener {
