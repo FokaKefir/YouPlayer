@@ -66,13 +66,13 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
                 this.cursor.getInt(this.cursor.getColumnIndex(MusicPlayerContract.MusicEntry.COLUMN_LENGTH))
         );
 
-        holder.txtTitle.setText(currentMusic.getTitle());
-        holder.txtArtist.setText(currentMusic.getArtist());
+        holder.txtTitle.setText(currentMusic.title);
+        holder.txtArtist.setText(currentMusic.artist);
 
-        if (currentMusic.getLength() % 60 > 9)
-            holder.txtLength.setText((currentMusic.getLength() / 60) + ":" + (currentMusic.getLength() % 60));
+        if (currentMusic.length % 60 > 9)
+            holder.txtLength.setText((currentMusic.length / 60) + ":" + (currentMusic.length % 60));
         else
-            holder.txtLength.setText((currentMusic.getLength() / 60) + ":0" + (currentMusic.getLength() % 60));
+            holder.txtLength.setText((currentMusic.length / 60) + ":0" + (currentMusic.length % 60));
 
         holder.music = currentMusic;
     }

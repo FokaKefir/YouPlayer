@@ -70,9 +70,9 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
 
             this.listener.onPreparedMusic(
                     R.drawable.ic_baseline_pause_music,
-                    this.currentMusic.getTitle(),
-                    this.currentMusic.getArtist(),
-                    this.currentMusic.getLength(),
+                    this.currentMusic.title,
+                    this.currentMusic.artist,
+                    this.currentMusic.length,
                     this.playlistId,
                     this.mediaPlayer.getAudioSessionId()
             );
@@ -104,9 +104,9 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
 
             this.listener.onPreparedMusic(
                     R.drawable.ic_baseline_pause_music,
-                    music.getTitle(),
-                    music.getArtist(),
-                    music.getLength(),
+                    music.title,
+                    music.artist,
+                    music.length,
                     this.playlistId,
                     this.mediaPlayer.getAudioSessionId()
             );
@@ -139,7 +139,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
                 this.currentMusic = getMusicFromPosition((position + this.musics.size()) % this.musics.size());
                 Uri uri = Uri.parse(
                         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                                "/YoutubeMusics/" + this.currentMusic.getVideoId() + MainActivity.AUDIO_FORMAT
+                                "/YoutubeMusics/" + this.currentMusic.videoId + MainActivity.AUDIO_FORMAT
                 );
                 this.playMusicUri(uri);
             }
@@ -151,7 +151,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
             Music queueMusic = this.queueMusics.get(0);
             Uri uri = Uri.parse(
                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                            "/YoutubeMusics/" + queueMusic.getVideoId() + MainActivity.AUDIO_FORMAT
+                            "/YoutubeMusics/" + queueMusic.videoId + MainActivity.AUDIO_FORMAT
             );
             this.playMusicUri(uri, queueMusic);
             this.queueMusics.remove(0);
@@ -161,7 +161,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
                 this.currentMusic = getMusicFromPosition(position % this.musics.size());
                 Uri uri = Uri.parse(
                         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                                "/YoutubeMusics/" + this.currentMusic.getVideoId() + MainActivity.AUDIO_FORMAT
+                                "/YoutubeMusics/" + this.currentMusic.videoId + MainActivity.AUDIO_FORMAT
                 );
                 this.playMusicUri(uri);
             }
@@ -205,12 +205,12 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener {
     private int getCurrentMusicPosition() {
         if (!this.shuffle) {
             for (int ind = 0; ind < musics.size(); ind++) {
-                if (this.currentMusic.getId() == this.musics.get(ind).getId())
+                if (this.currentMusic.id == this.musics.get(ind).id)
                     return ind;
             }
         } else {
             for (int ind = 0; ind < musics.size(); ind++) {
-                if (this.currentMusic.getId() == this.shuffleMusics.get(ind).getId())
+                if (this.currentMusic.id == this.shuffleMusics.get(ind).id)
                     return ind;
             }
         }

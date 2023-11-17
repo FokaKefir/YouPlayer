@@ -50,10 +50,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         VideoYT currentVideo = this.videos.get(position);
 
-        holder.txtTitle.setText(currentVideo.getSnippet().getTitle());
-        holder.txtChannel.setText(currentVideo.getSnippet().getChannelTitle());
+        holder.txtTitle.setText(currentVideo.snippet.title);
+        holder.txtChannel.setText(currentVideo.snippet.channelTitle);
 
-        String imageUrl = currentVideo.getSnippet().getThumbnails().getMedium().getUrl();
+        String imageUrl = currentVideo.snippet.thumbnails.medium.url;
         Picasso.get()
                 .load(imageUrl)
                 .placeholder(R.mipmap.ic_launcher)
@@ -64,9 +64,9 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHol
         holder.btnDownload.setVisibility(View.GONE);
         holder.imgVideo.setAlpha((float) 1.0);
 
-        holder.videoId = currentVideo.getId().getVideoId();
-        holder.videoChannel = currentVideo.getSnippet().getChannelTitle();
-        holder.thumbnail = currentVideo.getSnippet().getThumbnails().getMedium().getUrl();
+        holder.videoId = currentVideo.id.videoId;
+        holder.videoChannel = currentVideo.snippet.channelTitle;
+        holder.thumbnail = currentVideo.snippet.thumbnails.medium.url;
 
     }
 

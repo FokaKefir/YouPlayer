@@ -1,39 +1,22 @@
-package com.fokakefir.musicplayer.model.youtube;
+package com.fokakefir.musicplayer.model.youtube
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
-public class VideoYT {
-
+class VideoYT {
+    @JvmField
     @SerializedName("id")
     @Expose
-    private VideoId id;
+    var id: VideoId? = null
 
+    @JvmField
     @SerializedName("snippet")
     @Expose
-    private Snippet snippet;
+    var snippet: Snippet? = null
 
-    public VideoYT() {
-    }
-
-    public VideoYT(VideoId id, Snippet snippet) {
-        this.id = id;
-        this.snippet = snippet;
-    }
-
-    public VideoId getId() {
-        return id;
-    }
-
-    public void setId(VideoId id) {
-        this.id = id;
-    }
-
-    public Snippet getSnippet() {
-        return snippet;
-    }
-
-    public void setSnippet(Snippet snippet) {
-        this.snippet = snippet;
+    constructor()
+    constructor(id: VideoId?, snippet: Snippet?) {
+        this.id = id
+        this.snippet = snippet
     }
 }

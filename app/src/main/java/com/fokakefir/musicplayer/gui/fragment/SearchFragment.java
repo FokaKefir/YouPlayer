@@ -112,7 +112,7 @@ public class SearchFragment extends Fragment implements Callback<YoutubeVideos>,
         } else {
             YoutubeVideos videos = response.body();
             this.videos.clear();
-            this.videos.addAll(videos.getVideos());
+            this.videos.addAll(videos.videos);
             this.adapter.notifyDataSetChanged();
         }
     }

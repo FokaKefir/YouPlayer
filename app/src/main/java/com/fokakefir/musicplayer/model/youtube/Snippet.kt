@@ -1,77 +1,42 @@
-package com.fokakefir.musicplayer.model.youtube;
+package com.fokakefir.musicplayer.model.youtube
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
-public class Snippet {
-
+class Snippet {
     @SerializedName("publishedAt")
     @Expose
-    private String publishedAt;
+    var publishedAt: String? = null
 
+    @JvmField
     @SerializedName("title")
     @Expose
-    private String title;
+    var title: String? = null
 
     @SerializedName("description")
     @Expose
-    private String description;
+    var description: String? = null
 
+    @JvmField
     @SerializedName("channelTitle")
     @Expose
-    private String channelTitle;
+    var channelTitle: String? = null
 
+    @JvmField
     @SerializedName("thumbnails")
     @Expose
-    private ThumbnailsYT thumbnails;
+    var thumbnails: ThumbnailsYT? = null
 
-    public Snippet() {
-    }
-
-    public Snippet(String publishedAt, String title, String description, ThumbnailsYT thumbnails) {
-        this.publishedAt = publishedAt;
-        this.title = title;
-        this.description = description;
-        this.thumbnails = thumbnails;
-    }
-
-    public String getPublishedAt() {
-        return publishedAt;
-    }
-
-    public void setPublishedAt(String publishedAt) {
-        this.publishedAt = publishedAt;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getChannelTitle() {
-        return channelTitle;
-    }
-
-    public void setChannelTitle(String channelTitle) {
-        this.channelTitle = channelTitle;
-    }
-
-    public ThumbnailsYT getThumbnails() {
-        return thumbnails;
-    }
-
-    public void setThumbnails(ThumbnailsYT thumbnails) {
-        this.thumbnails = thumbnails;
+    constructor()
+    constructor(
+        publishedAt: String?,
+        title: String?,
+        description: String?,
+        thumbnails: ThumbnailsYT?
+    ) {
+        this.publishedAt = publishedAt
+        this.title = title
+        this.description = description
+        this.thumbnails = thumbnails
     }
 }

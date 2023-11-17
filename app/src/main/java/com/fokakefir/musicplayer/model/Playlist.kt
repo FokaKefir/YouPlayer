@@ -1,60 +1,24 @@
-package com.fokakefir.musicplayer.model;
+package com.fokakefir.musicplayer.model
 
-import android.graphics.Color;
+class Playlist {
+    var id = 0
+    var name: String? = null
+    var numberOfMusics = 0
+    var color: String? = null
 
-public class Playlist {
-
-    public static final String COLOR_RED = "red";
-    public static final String COLOR_ORANGE = "orange";
-    public static final String COLOR_YELLOW = "yellow";
-    public static final String COLOR_GREEN = "green";
-    public static final String COLOR_BLUE = "blue";
-
-    private int id;
-    private String name;
-    private int numberOfMusics;
-    private String color;
-
-    public Playlist() {
+    constructor()
+    constructor(id: Int, name: String?, numberOfMusics: Int, color: String?) {
+        this.id = id
+        this.name = name
+        this.numberOfMusics = numberOfMusics
+        this.color = color
     }
 
-    public Playlist(int id, String name, int numberOfMusics, String color) {
-        this.id = id;
-        this.name = name;
-        this.numberOfMusics = numberOfMusics;
-        this.color = color;
+    companion object {
+        const val COLOR_RED = "red"
+        const val COLOR_ORANGE = "orange"
+        const val COLOR_YELLOW = "yellow"
+        const val COLOR_GREEN = "green"
+        const val COLOR_BLUE = "blue"
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getNumberOfMusics() {
-        return numberOfMusics;
-    }
-
-    public void setNumberOfMusics(int numberOfMusics) {
-        this.numberOfMusics = numberOfMusics;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
 }

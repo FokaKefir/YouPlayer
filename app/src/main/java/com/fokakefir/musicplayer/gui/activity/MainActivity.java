@@ -397,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void playMusic(Music music, int playlistId) {
         String strUri = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                "/YoutubeMusics/" + music.getVideoId() + MainActivity.AUDIO_FORMAT;
+                "/YoutubeMusics/" + music.videoId + MainActivity.AUDIO_FORMAT;
 
         Intent intent = new Intent(INTENT_FILTER_ACTIVITY);
         intent.putExtra(TYPE, INTENT_TYPE_PLAY_URI);
@@ -515,7 +515,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void deleteMusicFromStorage(Music music) {
         File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/YoutubeMusics");
-        File file = new File(dir, music.getVideoId() + MainActivity.AUDIO_FORMAT);
+        File file = new File(dir, music.videoId + MainActivity.AUDIO_FORMAT);
         boolean deleted = file.delete();
 
         if (deleted)
@@ -593,8 +593,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     public void deleteMusic(Music music) {
-        this.database.delete(MusicEntry.TABLE_NAME, MusicEntry._ID + "=?", new String[]{String.valueOf(music.getId())});
-        this.database.delete(ConnectEntry.TABLE_NAME, ConnectEntry.COLUMN_MUSIC_ID + "=?", new String[]{String.valueOf(music.getId())});
+        this.database.delete(MusicEntry.TABLE_NAME, MusicEntry._ID + "=?", new String[]{String.valueOf(music.id)});
+        this.database.delete(ConnectEntry.TABLE_NAME, ConnectEntry.COLUMN_MUSIC_ID + "=?", new String[]{String.valueOf(music.id)});
 
         this.playlistsFragment.swapCursor(getAllPlaylists());
 
@@ -717,7 +717,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public Music getMusicById(int playlistId, int musicId) {
         ArrayList<Music> musics = getMusics(playlistId);
         for (Music music : musics) {
-            if (music.getId() == musicId)
+            if (music.id == musicId)
                 return music;
         }
         return null;

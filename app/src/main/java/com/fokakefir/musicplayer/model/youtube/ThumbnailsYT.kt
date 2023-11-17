@@ -1,48 +1,28 @@
-package com.fokakefir.musicplayer.model.youtube;
+package com.fokakefir.musicplayer.model.youtube
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
-public class ThumbnailsYT {
-
+class ThumbnailsYT {
+    @JvmField
     @SerializedName("medium")
     @Expose
-    private MediumThumbnail medium;
+    var medium: MediumThumbnail? = null
 
-    public ThumbnailsYT() {
+    constructor()
+    constructor(medium: MediumThumbnail?) {
+        this.medium = medium
     }
 
-    public ThumbnailsYT(MediumThumbnail medium) {
-        this.medium = medium;
-    }
-
-    public MediumThumbnail getMedium() {
-        return medium;
-    }
-
-    public void setMedium(MediumThumbnail medium) {
-        this.medium = medium;
-    }
-
-    public class MediumThumbnail {
+    inner class MediumThumbnail {
+        @JvmField
         @SerializedName("url")
         @Expose
-        private String url;
+        var url: String? = null
 
-        public MediumThumbnail() {
-        }
-
-        public MediumThumbnail(String url) {
-            this.url = url;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
+        constructor()
+        constructor(url: String?) {
+            this.url = url
         }
     }
-
 }

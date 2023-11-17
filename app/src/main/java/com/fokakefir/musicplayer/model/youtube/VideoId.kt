@@ -1,26 +1,16 @@
-package com.fokakefir.musicplayer.model.youtube;
+package com.fokakefir.musicplayer.model.youtube
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 
-public class VideoId {
-
+class VideoId {
+    @JvmField
     @SerializedName("videoId")
     @Expose
-    private String videoId;
+    var videoId: String? = null
 
-    public VideoId() {
-    }
-
-    public VideoId(String videoId) {
-        this.videoId = videoId;
-    }
-
-    public String getVideoId() {
-        return videoId;
-    }
-
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
+    constructor()
+    constructor(videoId: String?) {
+        this.videoId = videoId
     }
 }

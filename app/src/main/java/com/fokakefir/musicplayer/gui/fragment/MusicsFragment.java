@@ -86,12 +86,12 @@ public class MusicsFragment extends Fragment implements MusicAdapter.OnMusicList
 
     @Override
     public void onAddMusicClick(Music music) {
-        this.activity.addChoosePlaylistFragment(music.getId());
+        this.activity.addChoosePlaylistFragment(music.id);
     }
 
     @Override
     public void onRemoveMusicClick(Music music) {
-        this.activity.deleteConnection(this.playlistId, music.getId());
+        this.activity.deleteConnection(this.playlistId, music.id);
     }
 
     @Override
