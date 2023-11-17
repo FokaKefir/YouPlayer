@@ -1,305 +1,262 @@
-package com.fokakefir.musicplayer.logic.player;
+package com.fokakefir.musicplayer.logic.player
 
-import android.media.AudioAttributes;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Environment;
+import android.media.AudioAttributes
+import android.media.MediaPlayer
+import android.media.MediaPlayer.OnCompletionListener
+import android.net.Uri
+import android.os.Environment
+import com.fokakefir.musicplayer.R
+import com.fokakefir.musicplayer.gui.activity.MainActivity
+import com.fokakefir.musicplayer.model.Music
+import java.io.IOException
+import java.util.Collections
+import java.util.concurrent.ThreadLocalRandom
 
-import com.fokakefir.musicplayer.R;
-import com.fokakefir.musicplayer.gui.activity.MainActivity;
-import com.fokakefir.musicplayer.model.Music;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
-
-public class MusicPlayer implements MediaPlayer.OnCompletionListener {
-
-
+class MusicPlayer(
+    private val service: MusicPlayerService, private val listener: MusicPlayerListener
+) : OnCompletionListener {
     // region 1. Decl and Init
-
-    private MusicPlayerService service;
-    private MusicPlayerListener listener;
-
-    private MediaPlayer mediaPlayer;
-
-    private Music currentMusic;
-    private ArrayList<Music> musics;
-    private ArrayList<Music> shuffleMusics;
-    private ArrayList<Music> queueMusics;
-    private boolean shuffle;
-    private boolean repeat;
-    private int playlistId;
+    private var mediaPlayer: MediaPlayer? = null
+    @JvmField
+    var currentMusic: Music? = null
+    private var musics: ArrayList<Music?>? = null
+    private var shuffleMusics: ArrayList<Music?>? = null
+    private val queueMusics: ArrayList<Music>?
+    private var shuffle = false
+    var isRepeat = false
+    private var playlistId = 0
 
     // endregion
-
     // region 2. Constructor
-
-    public MusicPlayer(MusicPlayerService service, MusicPlayerListener listener) {
-        this.service = service;
-        this.listener = listener;
-        this.queueMusics = new ArrayList<>();
-        this.shuffle = false;
-        this.repeat = false;
+    init {
+        queueMusics = ArrayList()
     }
 
     // endregion
-
     // region 3. MediaPlayer
-
-    public void playMusicUri(Uri uri) {
-        if (this.mediaPlayer == null) {
-            this.mediaPlayer = new MediaPlayer();
-            this.mediaPlayer.setAudioAttributes(
-                    new AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-            );
-            this.mediaPlayer.setOnCompletionListener(this);
+    fun playMusicUri(uri: Uri?) {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer()
+            mediaPlayer!!.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            mediaPlayer!!.setOnCompletionListener(this)
         } else {
-            this.mediaPlayer.stop();
-            this.mediaPlayer.reset();
+            mediaPlayer!!.stop()
+            mediaPlayer!!.reset()
         }
-
         try {
-            this.mediaPlayer.setDataSource(this.service, uri);
-            this.mediaPlayer.prepare();
-            this.mediaPlayer.start();
-
-            this.listener.onPreparedMusic(
-                    R.drawable.ic_baseline_pause_music,
-                    this.currentMusic.title,
-                    this.currentMusic.artist,
-                    this.currentMusic.length,
-                    this.playlistId,
-                    this.mediaPlayer.getAudioSessionId()
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-            this.mediaPlayer = null;
+            mediaPlayer!!.setDataSource(service, uri!!)
+            mediaPlayer!!.prepare()
+            mediaPlayer!!.start()
+            listener.onPreparedMusic(
+                R.drawable.ic_baseline_pause_music,
+                currentMusic!!.title,
+                currentMusic!!.artist,
+                currentMusic!!.length,
+                playlistId,
+                mediaPlayer!!.audioSessionId
+            )
+        } catch (e: IOException) {
+            e.printStackTrace()
+            mediaPlayer = null
         }
     }
 
-    public void playMusicUri(Uri uri, Music music) {
-        if (this.mediaPlayer == null) {
-            this.mediaPlayer = new MediaPlayer();
-            this.mediaPlayer.setAudioAttributes(
-                    new AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-            );
-            this.mediaPlayer.setOnCompletionListener(this);
+    fun playMusicUri(uri: Uri?, music: Music) {
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer()
+            mediaPlayer!!.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            mediaPlayer!!.setOnCompletionListener(this)
         } else {
-            this.mediaPlayer.stop();
-            this.mediaPlayer.reset();
+            mediaPlayer!!.stop()
+            mediaPlayer!!.reset()
         }
-
         try {
-            this.mediaPlayer.setDataSource(this.service, uri);
-            this.mediaPlayer.prepare();
-            this.mediaPlayer.start();
-
-            this.listener.onPreparedMusic(
-                    R.drawable.ic_baseline_pause_music,
-                    music.title,
-                    music.artist,
-                    music.length,
-                    this.playlistId,
-                    this.mediaPlayer.getAudioSessionId()
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-            this.mediaPlayer = null;
+            mediaPlayer!!.setDataSource(service, uri!!)
+            mediaPlayer!!.prepare()
+            mediaPlayer!!.start()
+            listener.onPreparedMusic(
+                R.drawable.ic_baseline_pause_music,
+                music.title,
+                music.artist,
+                music.length,
+                playlistId,
+                mediaPlayer!!.audioSessionId
+            )
+        } catch (e: IOException) {
+            e.printStackTrace()
+            mediaPlayer = null
         }
     }
 
-    public void playMusic() {
-        if (this.mediaPlayer != null) {
-            this.mediaPlayer.start();
-
-            this.listener.onPlayMusic(R.drawable.ic_baseline_pause_music);
+    fun playMusic() {
+        if (mediaPlayer != null) {
+            mediaPlayer!!.start()
+            listener.onPlayMusic(R.drawable.ic_baseline_pause_music)
         }
     }
 
-    public void pauseMusic() {
-        if (this.mediaPlayer != null) {
-            this.mediaPlayer.pause();
-
-            this.listener.onPauseMusic(R.drawable.ic_baseline_play_music);
+    fun pauseMusic() {
+        if (mediaPlayer != null) {
+            mediaPlayer!!.pause()
+            listener.onPauseMusic(R.drawable.ic_baseline_play_music)
         }
     }
 
-    public void previousMusic() {
-        if (this.currentMusic != null) {
-            int position = getCurrentMusicPosition() - 1;
-            if (position >= 0 || (this.repeat && position == -1)) {
-                this.currentMusic = getMusicFromPosition((position + this.musics.size()) % this.musics.size());
-                Uri uri = Uri.parse(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                                "/YoutubeMusics/" + this.currentMusic.videoId + MainActivity.AUDIO_FORMAT
-                );
-                this.playMusicUri(uri);
+    fun previousMusic() {
+        if (currentMusic != null) {
+            val position = currentMusicPosition - 1
+            if (position >= 0 || isRepeat && position == -1) {
+                currentMusic = getMusicFromPosition((position + musics!!.size) % musics!!.size)
+                val uri = Uri.parse(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        .toString() +
+                            "/YoutubeMusics/" + currentMusic!!.videoId + MainActivity.AUDIO_FORMAT
+                )
+                this.playMusicUri(uri)
             }
         }
     }
 
-    public void nextMusic() {
-        if (this.queueMusics != null && !this.queueMusics.isEmpty()){
-            Music queueMusic = this.queueMusics.get(0);
-            Uri uri = Uri.parse(
-                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                            "/YoutubeMusics/" + queueMusic.videoId + MainActivity.AUDIO_FORMAT
-            );
-            this.playMusicUri(uri, queueMusic);
-            this.queueMusics.remove(0);
-        } else if (this.currentMusic != null) {
-            int position = getCurrentMusicPosition() + 1;
-            if (position < this.musics.size() || (this.repeat && position == this.musics.size())) {
-                this.currentMusic = getMusicFromPosition(position % this.musics.size());
-                Uri uri = Uri.parse(
-                        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) +
-                                "/YoutubeMusics/" + this.currentMusic.videoId + MainActivity.AUDIO_FORMAT
-                );
-                this.playMusicUri(uri);
+    fun nextMusic() {
+        if (queueMusics != null && !queueMusics.isEmpty()) {
+            val queueMusic = queueMusics[0]
+            val uri = Uri.parse(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    .toString() +
+                        "/YoutubeMusics/" + queueMusic.videoId + MainActivity.AUDIO_FORMAT
+            )
+            this.playMusicUri(uri, queueMusic)
+            queueMusics.removeAt(0)
+        } else if (currentMusic != null) {
+            val position = currentMusicPosition + 1
+            if (position < musics!!.size || isRepeat && position == musics!!.size) {
+                currentMusic = getMusicFromPosition(position % musics!!.size)
+                val uri = Uri.parse(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        .toString() +
+                            "/YoutubeMusics/" + currentMusic!!.videoId + MainActivity.AUDIO_FORMAT
+                )
+                this.playMusicUri(uri)
             }
         }
     }
 
-    public void stopMediaPlayer() {
-        if (this.mediaPlayer != null) {
-            this.mediaPlayer.release();
-            this.mediaPlayer = null;
-
-            this.listener.onStopMediaPlayer(R.drawable.ic_baseline_play_music);
+    fun stopMediaPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer!!.release()
+            mediaPlayer = null
+            listener.onStopMediaPlayer(R.drawable.ic_baseline_play_music)
         }
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        if (getCurrentMusicPosition() < this.musics.size() - 1) {
-            nextMusic();
+    override fun onCompletion(mediaPlayer: MediaPlayer) {
+        if (currentMusicPosition < musics!!.size - 1) {
+            nextMusic()
         } else {
-            if (this.repeat || (this.queueMusics != null && !this.queueMusics.isEmpty())) {
-                nextMusic();
+            if (isRepeat || queueMusics != null && !queueMusics.isEmpty()) {
+                nextMusic()
             } else {
-                stopMediaPlayer();
+                stopMediaPlayer()
             }
         }
     }
 
     // endregion
-
     // region 4. Getters and Setters
-
-    private Music getMusicFromPosition(int index) {
-        if (this.shuffle) {
-            return this.shuffleMusics.get(index);
+    private fun getMusicFromPosition(index: Int): Music? {
+        return if (shuffle) {
+            shuffleMusics!![index]
         } else {
-            return this.musics.get(index);
+            musics!![index]
         }
     }
 
-    private int getCurrentMusicPosition() {
-        if (!this.shuffle) {
-            for (int ind = 0; ind < musics.size(); ind++) {
-                if (this.currentMusic.id == this.musics.get(ind).id)
-                    return ind;
+    private val currentMusicPosition: Int
+        private get() {
+            if (!shuffle) {
+                for (ind in musics!!.indices) {
+                    if (currentMusic!!.id == musics!![ind]!!.id) return ind
+                }
+            } else {
+                for (ind in musics!!.indices) {
+                    if (currentMusic!!.id == shuffleMusics!![ind]!!.id) return ind
+                }
             }
-        } else {
-            for (int ind = 0; ind < musics.size(); ind++) {
-                if (this.currentMusic.id == this.shuffleMusics.get(ind).id)
-                    return ind;
-            }
+            return -1
         }
-        return -1;
+    val timePosition: Int
+        get() = if (mediaPlayer != null) {
+            mediaPlayer!!.currentPosition / 1000
+        } else 0
+
+    fun getMusics(): ArrayList<Music?>? {
+        return musics
     }
 
-    public int getTimePosition() {
-        if (this.mediaPlayer != null) {
-            return this.mediaPlayer.getCurrentPosition() / 1000;
-        }
-        return 0;
+    fun isShuffle(): Boolean {
+        return shuffle
     }
 
-    public Music getCurrentMusic() {
-        return currentMusic;
+    val isPlayable: Boolean
+        get() = mediaPlayer != null
+    val isPlaying: Boolean
+        get() = mediaPlayer!!.isPlaying
+
+    fun setMusics(musics: ArrayList<Music?>?) {
+        this.musics = musics
+        shuffleMusics = ArrayList(musics)
+        Collections.shuffle(shuffleMusics)
     }
 
-    public ArrayList<Music> getMusics() {
-        return musics;
+    fun setShuffle(shuffle: Boolean) {
+        this.shuffle = shuffle
+        if (this.shuffle && shuffleMusics != null) Collections.shuffle(shuffleMusics)
     }
 
-    public boolean isShuffle() {
-        return shuffle;
-    }
-
-    public boolean isRepeat() {
-        return repeat;
-    }
-
-    public boolean isPlayable() {
-        return (this.mediaPlayer != null);
-    }
-
-    public boolean isPlaying() {
-        return this.mediaPlayer.isPlaying();
-    }
-
-    public void setCurrentMusic(Music currentMusic) {
-        this.currentMusic = currentMusic;
-    }
-
-    public void setMusics(ArrayList<Music> musics) {
-        this.musics = musics;
-        this.shuffleMusics = new ArrayList<>(musics);
-        Collections.shuffle(this.shuffleMusics);
-    }
-
-    public void setShuffle(boolean shuffle) {
-        this.shuffle = shuffle;
-        if (this.shuffle && this.shuffleMusics != null)
-            Collections.shuffle(this.shuffleMusics);
-    }
-
-    public void setRepeat(boolean repeat) {
-        this.repeat = repeat;
-    }
-
-    public void setProgress(int progress) {
-        if (this.mediaPlayer != null) {
-            this.mediaPlayer.seekTo(progress * 1000, MediaPlayer.SEEK_CLOSEST);
+    fun setProgress(progress: Int) {
+        if (mediaPlayer != null) {
+            mediaPlayer!!.seekTo((progress * 1000).toLong(), MediaPlayer.SEEK_CLOSEST)
         }
     }
 
-    public void setPlaylistId(int playlistId) {
-        this.playlistId = playlistId;
+    fun setPlaylistId(playlistId: Int) {
+        this.playlistId = playlistId
     }
 
-    public void insertNewMusic(Music newMusic) {
-        this.musics.add(newMusic);
-
-        int index = ThreadLocalRandom.current().nextInt(0, this.shuffleMusics.size() + 1);
-        this.shuffleMusics.add(index, newMusic);
+    fun insertNewMusic(newMusic: Music?) {
+        musics!!.add(newMusic)
+        val index = ThreadLocalRandom.current().nextInt(0, shuffleMusics!!.size + 1)
+        shuffleMusics!!.add(index, newMusic)
     }
 
-    public void addQueueMusic(Music queueMusic) {
-        this.queueMusics.add(queueMusic);
+    fun addQueueMusic(queueMusic: Music) {
+        queueMusics!!.add(queueMusic)
     }
 
     // endregion
-
     // region 5. Listener
+    interface MusicPlayerListener {
+        fun onPreparedMusic(
+            imgResource: Int,
+            title: String?,
+            artist: String?,
+            length: Int,
+            playlistId: Int,
+            audioSessionId: Int
+        )
 
-    public interface MusicPlayerListener {
-        void onPreparedMusic(int imgResource, String title, String artist, int length, int playlistId, int audioSessionId);
-        void onPlayMusic(int imgResource);
-        void onPauseMusic(int imgResource);
-        void onStopMediaPlayer(int imgResource);
-    }
-
-    // endregion
-
+        fun onPlayMusic(imgResource: Int)
+        fun onPauseMusic(imgResource: Int)
+        fun onStopMediaPlayer(imgResource: Int)
+    } // endregion
 }
