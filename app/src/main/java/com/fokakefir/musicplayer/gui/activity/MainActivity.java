@@ -483,28 +483,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     public void downloadMusic(String url, String videoId, String videoArtist) {
         if (!isMusicAlreadyDownloaded(videoId) && !isMusicActuallyDownloading(videoId)) {
-            /*@SuppressLint("StaticFieldLeak")
-            YouTubeUriExtractor youTubeUriExtractor = new YouTubeUriExtractor(this) {
-                @Override
-                public void onUrisAvailable(String videoId, String videoTitle, SparseArray<YtFile> ytFiles) {
-                    if (ytFiles != null) {
-                        try {
-                            String downloadUrl = ytFiles.get(YOUTUBE_ITAG_AUDIO_128K).getUrl();
-                            if (downloadUrl != null) {
-                                RequestDownloadMusicStream requestDownloadMusicStream = new RequestDownloadMusicStream(MainActivity.this, MainActivity.this);
-                                requestDownloadMusicStream.execute(downloadUrl, videoId, videoTitle, videoArtist);
-                                downloadingMusicList.add(videoId);
-                            } else {
-                                Toast.makeText(MainActivity.this, "Download video URL not found", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            Toast.makeText(MainActivity.this, String.valueOf(e), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            };
-            youTubeUriExtractor.execute(url);*/
-
             new YouTubeExtractor(this) {
                 @Override
                 protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
@@ -518,7 +496,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             }
                         } catch (Exception e) {}
                     }
-
                 }
             }.extract(url, true, true);
         } else {
