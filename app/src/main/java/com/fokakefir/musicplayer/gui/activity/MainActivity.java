@@ -540,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         this.playlistsFragment.swapCursor(getAllPlaylists());
         if (this.musicsFragment != null)
-            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.getPlaylistId()));
+            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.playlistId));
 
         if (this.currentPlaylistId == DEFAULT_PLAYLIST_ID) {
             addMusicToMusicPlayer(DEFAULT_PLAYLIST_ID, (int) id);
@@ -568,7 +568,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         this.playlistsFragment.swapCursor(getAllPlaylists());
         if (this.musicsFragment != null)
-            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.getPlaylistId()));
+            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.playlistId));
 
         closeChoosePlaylistFragment();
 
@@ -596,7 +596,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         this.playlistsFragment.swapCursor(getAllPlaylists());
 
         if (this.musicsFragment != null)
-            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.getPlaylistId()));
+            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.playlistId));
 
         Toast.makeText(this, "Music deleted", Toast.LENGTH_SHORT).show();
     }
@@ -620,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         this.playlistsFragment.swapCursor(getAllPlaylists());
 
         if (this.musicsFragment != null)
-            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.getPlaylistId()));
+            this.musicsFragment.swapCursor(getAllMusic(this.musicsFragment.playlistId));
 
         Toast.makeText(this, "Music removed from playlist", Toast.LENGTH_SHORT).show();
     }
