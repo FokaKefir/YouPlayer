@@ -1,33 +1,31 @@
-package com.fokakefir.musicplayer.logic.database;
+package com.fokakefir.musicplayer.logic.database
 
-import android.provider.BaseColumns;
+import android.provider.BaseColumns
 
-public class MusicPlayerContract {
-
-    private MusicPlayerContract() {}
-
-    public static final class MusicEntry implements BaseColumns {
-        public static final String TABLE_NAME = "musics";
-        public static final String COLUMN_VIDEO_ID = "video_id";
-        public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_ARTIST = "artist";
-        public static final String COLUMN_LENGTH = "length";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
+class MusicPlayerContract private constructor() {
+    object MusicEntry : BaseColumns {
+        const val TABLE_NAME = "musics"
+        const val _ID = "_id"
+        const val COLUMN_VIDEO_ID = "video_id"
+        const val COLUMN_TITLE = "title"
+        const val COLUMN_ARTIST = "artist"
+        const val COLUMN_LENGTH = "length"
+        const val COLUMN_TIMESTAMP = "timestamp"
     }
 
-    public static final class PlaylistEntry implements BaseColumns {
-        public static final String TABLE_NAME = "playlists";
-        public static final String COLUMN_NAME = "name";
-        public static final String COLUMN_COLOR = "color";
-        public static final String COLUMN_MUSICS = "musics";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
+    object PlaylistEntry : BaseColumns {
+        const val TABLE_NAME = "playlists"
+        const val _ID = "_id"
+        const val COLUMN_NAME = "name"
+        const val COLUMN_COLOR = "color"
+        const val COLUMN_MUSICS = "musics"
+        const val COLUMN_TIMESTAMP = "timestamp"
     }
 
-    public static final class ConnectEntry implements BaseColumns {
-        public static final String TABLE_NAME = "connect";
-        public static final String COLUMN_PLAYLIST_ID = "playlist_id";
-        public static final String COLUMN_MUSIC_ID = "music_id";
-        public static final String COLUMN_TIMESTAMP = "timestamp";
+    object ConnectEntry : BaseColumns {
+        const val TABLE_NAME = "connect"
+        const val COLUMN_PLAYLIST_ID = "playlist_id"
+        const val COLUMN_MUSIC_ID = "music_id"
+        const val COLUMN_TIMESTAMP = "timestamp"
     }
-
 }
