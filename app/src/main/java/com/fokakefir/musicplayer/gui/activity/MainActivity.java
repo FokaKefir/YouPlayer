@@ -513,10 +513,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public void deleteMusicFromStorage(Music music) {
         File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/YoutubeMusics");
         File file = new File(dir, music.videoId + MainActivity.AUDIO_FORMAT);
-        boolean deleted = file.delete();
 
-        if (deleted)
-            deleteMusic(music);
+        if (file.exists() && file.canWrite()) {
+            boolean deleted = file.delete();
+
+            if (deleted)
+                deleteMusic(music);
+        }
     }
 
     // endregion

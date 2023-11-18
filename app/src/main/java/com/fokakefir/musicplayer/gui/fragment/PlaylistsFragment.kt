@@ -21,11 +21,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 open class PlaylistsFragment(private val activity: MainActivity) : Fragment(), OnPlaylistListener,
     View.OnClickListener, OnPlaylistDialogListener {
+
     private lateinit var view: View
     private lateinit var recyclerView: RecyclerView
     private var adapter: PlaylistAdapter? = null
     private var layoutManager: RecyclerView.LayoutManager? = null
     private lateinit var fabAddPlaylist: FloatingActionButton
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

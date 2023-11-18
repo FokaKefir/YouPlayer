@@ -1,205 +1,150 @@
-package com.fokakefir.musicplayer.gui.recyclerview;
+package com.fokakefir.musicplayer.gui.recyclerview
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.database.Cursor;
-import android.graphics.ColorFilter;
-import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.database.Cursor
+import android.view.ContextMenu
+import android.view.ContextMenu.ContextMenuInfo
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.View.OnCreateContextMenuListener
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.fokakefir.musicplayer.R
+import com.fokakefir.musicplayer.gui.activity.MainActivity
+import com.fokakefir.musicplayer.gui.recyclerview.PlaylistAdapter.PlaylistViewHolder
+import com.fokakefir.musicplayer.logic.database.MusicPlayerContract
+import com.fokakefir.musicplayer.model.Playlist
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class PlaylistAdapter(
+    private var cursor: Cursor?,
+    private val onPlaylistListener: OnPlaylistListener,
+    private val context: Context?
+) : RecyclerView.Adapter<PlaylistViewHolder>() {
 
-import com.fokakefir.musicplayer.R;
-import com.fokakefir.musicplayer.gui.activity.MainActivity;
-import com.fokakefir.musicplayer.logic.database.MusicPlayerContract;
-import com.fokakefir.musicplayer.model.Playlist;
+    private var options = true
 
-import java.util.List;
-
-public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
-
-    // region 1. Decl and Init
-
-    private Cursor cursor;
-    private OnPlaylistListener onPlaylistListener;
-    private Context context;
-
-    private boolean options;
-
-    // endregion
-
-    // region 2. Constructor
-
-    public PlaylistAdapter(Cursor cursor, OnPlaylistListener onPlaylistListener, Context context) {
-        this.cursor = cursor;
-        this.onPlaylistListener = onPlaylistListener;
-        this.context = context;
-        this.options = true;
-    }
-
-    // endregion
-
-    // region 3. Adapter
-
-    @NonNull
-    @Override
-    public PlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_playlist, parent, false);
-        PlaylistViewHolder viewHolder = new PlaylistViewHolder(v, this.onPlaylistListener);
-
-        return viewHolder;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.example_playlist, parent, false)
+        return PlaylistViewHolder(v, onPlaylistListener)
     }
 
     @SuppressLint("SetTextI18n")
-    @Override
-    public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
-        if (!this.cursor.moveToPosition(position))
-            return;
-
-        holder.playlistId = this.cursor.getInt(this.cursor.getColumnIndex(MusicPlayerContract.PlaylistEntry._ID));
-        holder.txtName.setText(this.cursor.getString(this.cursor.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_NAME)));
-        holder.txtSongs.setText(this.cursor.getString(this.cursor.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_MUSICS)) + " music");
-
-        int color = R.color.playlistWhite;
-        switch (this.cursor.getString(this.cursor.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_COLOR))) {
-            case Playlist.COLOR_RED:
-                color = R.color.playlistRed;
-                break;
-            case Playlist.COLOR_ORANGE:
-                color = R.color.playlistOrange;
-                break;
-            case Playlist.COLOR_YELLOW:
-                color = R.color.playlistYellow;
-                break;
-            case Playlist.COLOR_GREEN:
-                color = R.color.playlistGreen;
-                break;
-            case Playlist.COLOR_BLUE:
-                color = R.color.playlistBlue;
-                break;
+    override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
+        if (!cursor!!.moveToPosition(position)) return
+        holder.playlistId =
+            cursor!!.getInt(cursor!!.getColumnIndex(MusicPlayerContract.PlaylistEntry._ID))
+        holder.txtName.text =
+            cursor!!.getString(cursor!!.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_NAME))
+        holder.txtSongs.text =
+            cursor!!.getString(cursor!!.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_MUSICS)) + " music"
+        var color = R.color.playlistWhite
+        when (cursor!!.getString(cursor!!.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_COLOR))) {
+            Playlist.COLOR_RED -> color = R.color.playlistRed
+            Playlist.COLOR_ORANGE -> color = R.color.playlistOrange
+            Playlist.COLOR_YELLOW -> color = R.color.playlistYellow
+            Playlist.COLOR_GREEN -> color = R.color.playlistGreen
+            Playlist.COLOR_BLUE -> color = R.color.playlistBlue
         }
-        holder.imgPlaylist.setBackgroundColor(this.context.getResources().getColor(color));
-        //holder.imgPlaylist.setColorFilter(this.context.getResources().getColor(color));
 
-        holder.options = this.options;
-        holder.name = this.cursor.getString(this.cursor.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_NAME));
-        holder.color = this.cursor.getString(this.cursor.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_COLOR));
+        holder.imgPlaylist.setBackgroundColor(context!!.resources.getColor(color))
+        holder.options = options
+        holder.name =
+            cursor!!.getString(cursor!!.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_NAME))
+        holder.color =
+            cursor!!.getString(cursor!!.getColumnIndex(MusicPlayerContract.PlaylistEntry.COLUMN_COLOR))
     }
 
-    @Override
-    public int getItemCount() {
-        return this.cursor.getCount();
+    override fun getItemCount(): Int {
+        return cursor!!.count
     }
 
-    public void setOptions(boolean options) {
-        this.options = options;
+    fun setOptions(options: Boolean) {
+        this.options = options
     }
 
-    public void swapCursor(Cursor newCursor) {
-        if (this.cursor != null) {
-            this.cursor.close();
+    fun swapCursor(newCursor: Cursor?) {
+        if (cursor != null) {
+            cursor!!.close()
         }
-        this.cursor = newCursor;
-
+        cursor = newCursor
         if (newCursor != null) {
-            notifyDataSetChanged();
+            notifyDataSetChanged()
         }
     }
 
     // endregion
-
     // region 4. Holder class
+    inner class PlaylistViewHolder(itemView: View, onPlaylistListener: OnPlaylistListener) :
+        RecyclerView.ViewHolder(itemView), View.OnClickListener, OnCreateContextMenuListener,
+        MenuItem.OnMenuItemClickListener {
+        var imgPlaylist: ImageView
+        var txtName: TextView
+        var txtSongs: TextView
+        var playlistId = 0
+        var name: String? = null
+        var color: String? = null
+        var options = true
+        private val onPlaylistListener: OnPlaylistListener
 
-    public class PlaylistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnCreateContextMenuListener, MenuItem.OnMenuItemClickListener {
-
-        private static final int MENU_ITEM_EDIT_ID = 1;
-        private static final int MENU_ITEM_DELETE_ID = 2;
-
-        public ImageView imgPlaylist;
-        public TextView txtName;
-        public TextView txtSongs;
-
-        public int playlistId;
-        public String name;
-        public String color;
-
-        public boolean options;
-
-        private View itemView;
-
-        private OnPlaylistListener onPlaylistListener;
-
-        public PlaylistViewHolder(@NonNull View itemView, OnPlaylistListener onPlaylistListener) {
-            super(itemView);
-
-            this.playlistId = 0;
-            this.options = true;
-
-            this.imgPlaylist = itemView.findViewById(R.id.img_playlist);
-            this.txtName = itemView.findViewById(R.id.txt_playlist_name);
-            this.txtSongs = itemView.findViewById(R.id.txt_playlist_songs);
-
-            this.itemView = itemView;
-            this.itemView.setOnClickListener(this);
-            this.itemView.setOnCreateContextMenuListener(this);
-
-            this.onPlaylistListener = onPlaylistListener;
+        init {
+            imgPlaylist = itemView.findViewById(R.id.img_playlist)
+            txtName = itemView.findViewById(R.id.txt_playlist_name)
+            txtSongs = itemView.findViewById(R.id.txt_playlist_songs)
+            this.itemView.setOnClickListener(this)
+            this.itemView.setOnCreateContextMenuListener(this)
+            this.onPlaylistListener = onPlaylistListener
         }
 
-        @Override
-        public void onClick(View view) {
-            if (view == this.itemView) {
-                this.onPlaylistListener.onPlaylistClick(this.playlistId);
+        override fun onClick(view: View) {
+            if (view === this.itemView) {
+                this.onPlaylistListener.onPlaylistClick(playlistId)
             }
         }
 
-        @Override
-        public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-            if (!this.options || this.playlistId == MainActivity.DEFAULT_PLAYLIST_ID)
-                return;
-
-            menu.setHeaderTitle("Options");
-
-            MenuItem itemEdit = menu.add(Menu.NONE, MENU_ITEM_EDIT_ID, 1, "Edit playlist");
-            MenuItem itemDelete = menu.add(Menu.NONE, MENU_ITEM_DELETE_ID, 2, "Delete playlist");
-
-            itemEdit.setOnMenuItemClickListener(this);
-            itemDelete.setOnMenuItemClickListener(this);
+        override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenuInfo?) {
+            if (!this.options || playlistId == MainActivity.DEFAULT_PLAYLIST_ID) return
+            menu?.setHeaderTitle("Options")
+            val itemEdit = menu?.add(Menu.NONE, MENU_ITEM_EDIT_ID, 1, "Edit playlist")
+            val itemDelete =
+                menu?.add(Menu.NONE, MENU_ITEM_DELETE_ID, 2, "Delete playlist")
+            itemEdit?.setOnMenuItemClickListener(this)
+            itemDelete?.setOnMenuItemClickListener(this)
         }
 
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            switch (item.getItemId()) {
-                case MENU_ITEM_EDIT_ID:
-                    this.onPlaylistListener.onEditPlaylistClick(this.playlistId, this.name, this.color);
-                    return true;
-                case MENU_ITEM_DELETE_ID:
-                    this.onPlaylistListener.onDeletePlaylistClick(this.playlistId);
-                    return true;
-                default:
-                    return false;
+        override fun onMenuItemClick(item: MenuItem): Boolean {
+            return when (item.itemId) {
+                MENU_ITEM_EDIT_ID -> {
+                    val name: String = name ?: ""
+                    val color: String = color ?: ""
+                    this.onPlaylistListener.onEditPlaylistClick(playlistId, name, color)
+                    true
+                }
+
+                MENU_ITEM_DELETE_ID -> {
+                    this.onPlaylistListener.onDeletePlaylistClick(playlistId)
+                    true
+                }
+
+                else -> false
             }
         }
+
+
+        private val MENU_ITEM_EDIT_ID = 1
+        private val MENU_ITEM_DELETE_ID = 2
+
     }
 
     // endregion
-
     // region 5. Listener interface
-
-    public interface OnPlaylistListener {
-        void onPlaylistClick(int playlistId);
-        void onEditPlaylistClick(int playlistId, String name, String color);
-        void onDeletePlaylistClick(int playlistId);
-    }
-
-    // endregion
-
+    interface OnPlaylistListener {
+        fun onPlaylistClick(playlistId: Int)
+        fun onEditPlaylistClick(playlistId: Int, name: String, color: String)
+        fun onDeletePlaylistClick(playlistId: Int)
+    } // endregion
 }

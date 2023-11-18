@@ -1,150 +1,94 @@
-package com.fokakefir.musicplayer.gui.recyclerview;
+package com.fokakefir.musicplayer.gui.recyclerview
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.fokakefir.musicplayer.R
+import com.fokakefir.musicplayer.gui.recyclerview.VideoAdapter.VideoViewHolder
+import com.fokakefir.musicplayer.model.youtube.VideoYT
+import com.squareup.picasso.Picasso
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+class VideoAdapter(
+    private val videos: List<VideoYT>,
+    private val onVideoListener: OnVideoListener
+) : RecyclerView.Adapter<VideoViewHolder>() {
 
-import com.fokakefir.musicplayer.R;
-import com.fokakefir.musicplayer.model.youtube.VideoYT;
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
-
-public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.VideoViewHolder> {
-
-    // region 1. Decl and Init
-
-    private List<VideoYT> videos;
-    private OnVideoListener onVideoListener;
-
-    // endregion
-
-    // region 2. Constructor
-
-    public VideoAdapter(List<VideoYT> videos, OnVideoListener onVideoListener) {
-        this.videos = videos;
-        this.onVideoListener = onVideoListener;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
+        val v =
+            LayoutInflater.from(parent.context).inflate(R.layout.example_video, parent, false)
+        return VideoViewHolder(v, onVideoListener)
     }
 
-
-    // endregion
-
-    // region 3. Adapter
-
-    @NonNull
-    @Override
-    public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.example_video, parent, false);
-        VideoViewHolder viewHolder = new VideoViewHolder(v, this.onVideoListener);
-
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
-        VideoYT currentVideo = this.videos.get(position);
-
-        holder.txtTitle.setText(currentVideo.snippet.title);
-        holder.txtChannel.setText(currentVideo.snippet.channelTitle);
-
-        String imageUrl = currentVideo.snippet.thumbnails.medium.url;
+    override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
+        val currentVideo = videos[position]
+        holder.txtTitle.text = currentVideo.snippet!!.title
+        holder.txtChannel.text = currentVideo.snippet!!.channelTitle
+        val imageUrl = currentVideo.snippet!!.thumbnails!!.medium!!.url
         Picasso.get()
-                .load(imageUrl)
-                .placeholder(R.mipmap.ic_launcher)
-                .fit()
-                .centerCrop()
-                .into(holder.imgVideo);
-
-        holder.btnDownload.setVisibility(View.GONE);
-        holder.imgVideo.setAlpha((float) 1.0);
-
-        holder.videoId = currentVideo.id.videoId;
-        holder.videoChannel = currentVideo.snippet.channelTitle;
-        holder.thumbnail = currentVideo.snippet.thumbnails.medium.url;
-
+            .load(imageUrl)
+            .placeholder(R.mipmap.ic_launcher)
+            .fit()
+            .centerCrop()
+            .into(holder.imgVideo)
+        holder.btnDownload.visibility = View.GONE
+        holder.imgVideo.alpha = 1.0.toFloat()
+        holder.videoId = currentVideo.id!!.videoId
+        holder.videoChannel = currentVideo.snippet!!.channelTitle
+        holder.thumbnail = currentVideo.snippet!!.thumbnails!!.medium!!.url
     }
 
-    @Override
-    public int getItemCount() {
-        return videos.size();
+    override fun getItemCount(): Int {
+        return videos.size
     }
 
-    // endregion
+    class VideoViewHolder(itemView: View, onVideoListener: OnVideoListener) :
+        RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        var imgVideo: ImageView
+        var txtTitle: TextView
+        var txtChannel: TextView
+        var btnDownload: ImageButton
+        var videoId: String? = null
+        var videoChannel: String? = null
+        var thumbnail: String? = null
+        var selected = false
+        private val onVideoListener: OnVideoListener
 
-    // region 4. Holder class
-
-    public static class VideoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        public ImageView imgVideo;
-        public TextView txtTitle;
-        public TextView txtChannel;
-        public ImageButton btnDownload;
-
-        public String videoId;
-        public String videoChannel;
-        public String thumbnail;
-        public boolean selected;
-
-        private View itemView;
-
-        private OnVideoListener onVideoListener;
-
-        public VideoViewHolder(@NonNull View itemView, OnVideoListener onVideoListener) {
-            super(itemView);
-
-            this.selected = false;
-
-            this.imgVideo = itemView.findViewById(R.id.img_video);
-            this.txtTitle = itemView.findViewById(R.id.txt_video_title);
-            this.txtChannel = itemView.findViewById(R.id.txt_video_channel);
-            this.btnDownload = itemView.findViewById(R.id.btn_download);
-
-            this.videoId = null;
-            this.videoChannel = null;
-            this.thumbnail = null;
-
-            this.itemView = itemView;
-            itemView.setOnClickListener(this);
-
-            this.btnDownload.setOnClickListener(this);
-
-            this.onVideoListener = onVideoListener;
+        init {
+            imgVideo = itemView.findViewById(R.id.img_video)
+            txtTitle = itemView.findViewById(R.id.txt_video_title)
+            txtChannel = itemView.findViewById(R.id.txt_video_channel)
+            btnDownload = itemView.findViewById(R.id.btn_download)
+            itemView.setOnClickListener(this)
+            btnDownload.setOnClickListener(this)
+            this.onVideoListener = onVideoListener
         }
 
-        @Override
-        public void onClick(View view) {
-            if (view == this.itemView) {
-                if (!this.selected) {
-
-                    this.imgVideo.animate().alpha((float) 0.5).setDuration(100).start();
-                    this.btnDownload.setVisibility(View.VISIBLE);
-                    this.selected = true;
+        override fun onClick(view: View) {
+            if (view === this.itemView) {
+                if (!selected) {
+                    imgVideo.animate().alpha(0.5.toFloat()).setDuration(100).start()
+                    btnDownload.visibility = View.VISIBLE
+                    selected = true
                 } else {
-                    this.imgVideo.animate().alpha((float) 1.0).setDuration(100).start();
-                    this.btnDownload.setVisibility(View.GONE);
-                    this.selected = false;
+                    imgVideo.animate().alpha(1.0.toFloat()).setDuration(100).start()
+                    btnDownload.visibility = View.GONE
+                    selected = false
                 }
-            } else if (view.getId() == R.id.btn_download) {
-                if (this.videoId != null)
-                    this.onVideoListener.onVideoDownloadClick(this.videoId, this.videoChannel);
+            } else if (view.id == R.id.btn_download) {
+                if (videoId != null) {
+                    val videoId: String = videoId ?: ""
+                    val videoChannel: String = videoChannel ?: ""
+                    onVideoListener.onVideoDownloadClick(videoId, videoChannel)
+                }
             }
         }
     }
 
-    // endregion
-
-    // region 5. Listener interface
-
-    public interface OnVideoListener {
-        void onVideoDownloadClick(String videoId, String videoChannel);
+    interface OnVideoListener {
+        fun onVideoDownloadClick(videoId: String, videoChannel: String)
     }
-
-    // endregion
-
 }

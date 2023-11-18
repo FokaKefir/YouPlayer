@@ -37,7 +37,7 @@ class SearchFragment(private val activity: MainActivity) : Fragment(), Callback<
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         view = inflater.inflate(R.layout.fragment_search, container, false)
         txtSearch = view.findViewById(R.id.txt_search)
         btnSearch = view.findViewById(R.id.btn_search)
@@ -45,7 +45,7 @@ class SearchFragment(private val activity: MainActivity) : Fragment(), Callback<
         videos = ArrayList()
         recyclerView = view.findViewById(R.id.recycler_view_videos)
         layoutManager = LinearLayoutManager(context)
-        adapter = VideoAdapter(videos, this)
+        adapter = VideoAdapter(videos as ArrayList<VideoYT>, this)
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter = adapter
         return view
