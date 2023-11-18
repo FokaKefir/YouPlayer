@@ -38,6 +38,7 @@ class MusicPlayerService : Service(), MusicPlayerListener, Runnable {
     private val binder: IBinder? = null
 
     // endregion
+
     // region 2. Lifecycle
     override fun onCreate() {
         super.onCreate()
@@ -97,6 +98,7 @@ class MusicPlayerService : Service(), MusicPlayerListener, Runnable {
 
     override fun onDestroy() {
         super.onDestroy()
+        musicPlayer?.stopMediaPlayer()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
         deleteNotification()
     }
